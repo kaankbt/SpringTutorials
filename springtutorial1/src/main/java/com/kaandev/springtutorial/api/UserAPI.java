@@ -1,0 +1,57 @@
+package com.kaandev.springtutorial.api;
+
+import com.kaandev.springtutorial.dto.UserCreateDTO;
+import com.kaandev.springtutorial.dto.UserUpdateDTO;
+import com.kaandev.springtutorial.dto.UserViewDTO;
+import com.kaandev.springtutorial.service.UserService;
+import com.kaandev.springtutorial.shared.GenericResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
+public class UserAPI {
+    private final UserService userService;
+
+    @GetMapping("v1/user/{id}")
+    public ResponseEntity<UserViewDTO> getUserById(@PathVariable Long id) {
+        final UserViewDTO user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("v1/user")
+    public ResponseEntity<List<UserViewDTO>> getUsers() {
+        final List<UserViewDTO> users = userService.getUsers();
+        return ResponseEntity.ok(users);
+    }
+
+    //api/v1/user
+    @PostMapping("v1/user")
+    public ResponseEntity<?> createUser(@RequestBody UserCreateDTO userCreateDTO) {
+        userService.createUser(userCreateDTO);
+        return ResponseEntity.ok(new GenericResponse("User Created."));
+    }
+
+    @PutMapping("v1/user{id} ")
+    public ResponseEntity<UserViewDTO> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateDTO userUpdateDTO) {
+        final UserViewDTO user = userService.updateUser(id, userUpdateDTO);
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("v1/user/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(new GenericResponse("User Deleted !"));
+    }
+
+    @GetMapping("v1/user/slice")
+    public ResponseEntity<List<UserViewDTO>> slice(Pageable pageable) {
+        final List<UserViewDTO> users = userService.slice(pageable);
+        return ResponseEntity.ok(users);
+    }
+}
